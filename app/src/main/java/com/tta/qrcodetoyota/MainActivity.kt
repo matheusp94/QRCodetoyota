@@ -1,7 +1,10 @@
 package com.tta.qrcodetoyota
 
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.widget.TextView
+import android.widget.Toast
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 
@@ -11,7 +14,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var absTextView: TextView
     private lateinit var fuelTextView: TextView
     private lateinit var vinTextView: TextView
+    private lateinit var logsDisplayTextView: TextView
     private lateinit var vhalReader: VhalReader
+    private val logLines = mutableListOf<String>()
+    private val maxLogLines = 50
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,8 +27,21 @@ class MainActivity : AppCompatActivity() {
         absTextView = findViewById(R.id.abs_text)
         fuelTextView = findViewById(R.id.fuel_text)
         vinTextView = findViewById(R.id.vin_text)
+        logsDisplayTextView = findViewById(R.id.logs_display)
 
         FileLogger.init(this)
+
+        // Iniciar captura de logs
+        LogCapturer.start { logLine ->
+            runOnUiThread {
+                addLogLine(logLine)
+            }
+        }
+
+        // Botão de copiar logs
+        findViewById<android.widget.Button>(R.id.copy_logs_button).setOnClickListener {
+            copyLogsToClipboard()
+        }
 
         // Botão de refresh
         findViewById<android.widget.Button>(R.id.refresh_button).setOnClickListener {
@@ -117,8 +136,25 @@ class MainActivity : AppCompatActivity() {
         }.start()
     }
 
+    private fun addLogLine(line: String) {
+        logLines.add(0, line)
+        if (logLines.size > maxLogLines) {
+            logLines.removeAt(logLines.size - 1)
+        }
+        logsDisplayTextView.text = logLines.joinToString("\n")
+    }
+
+    private fun copyLogsToClipboard() {
+        val allLogs = logLines.asReversed().joinToString("\n")
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = android.content.ClipData.newPlainText("Logs", allLogs)
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(this, "Logs copiados para área de transferência!", Toast.LENGTH_SHORT).show()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+        LogCapturer.stop()
         vhalReader.disconnect()
     }
 

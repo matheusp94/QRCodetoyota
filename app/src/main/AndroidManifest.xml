@@ -5,6 +5,7 @@
     <!-- Car API Permissions -->
     <uses-permission android:name="android.car.permission.CAR_DYNAMICS" />
     <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
 
     <application
         android:allowBackup="true"

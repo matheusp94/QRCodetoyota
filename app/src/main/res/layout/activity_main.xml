@@ -3,91 +3,241 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#ffffff">
+    android:background="#f8f9fa">
 
+    <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:background="#1976d2"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="VHAL Debug Monitor"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#ffffff" />
 
         <Button
             android:id="@+id/refresh_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="🔄 Refresh"
-            android:textSize="16sp"
-            android:minWidth="48dp"
-            android:minHeight="48dp"
-            android:padding="8dp" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
+            android:text="Refresh"
+            android:textSize="12sp"
+            android:textColor="#1976d2"
+            android:backgroundTint="#ffffff"
+            android:padding="8dp"
+            android:layout_marginEnd="8dp" />
 
         <Button
             android:id="@+id/close_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="X"
-            android:textSize="20sp"
-            android:minWidth="48dp"
-            android:minHeight="48dp"
-            android:padding="8dp" />
+            android:text="✕"
+            android:textSize="18sp"
+            android:textColor="#ffffff"
+            android:backgroundTint="#d32f2f"
+            android:padding="4dp" />
 
     </LinearLayout>
 
+    <!-- Container horizontal para os dois painéis -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:orientation="horizontal"
+        android:spacing="1dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hello World"
-            android:textSize="32sp"
-            android:textColor="#000000"
-            android:layout_marginBottom="16dp" />
+        <!-- Painel esquerdo: Informações do app -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="top|center_horizontal"
+            android:background="#ffffff"
+            android:padding="24dp">
 
-        <TextView
-            android:id="@+id/vhal_status_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="VHAL: --"
-            android:textSize="16sp"
-            android:textColor="#000000"
-            android:layout_marginBottom="12dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vehicle Status"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#1976d2"
+                android:layout_marginBottom="24dp" />
 
-        <TextView
-            android:id="@+id/abs_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ABS Status: --"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="#000000"
-            android:layout_marginBottom="12dp" />
+            <!-- VHAL Status Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#f5f5f5"
+                android:padding="16dp"
+                android:layout_marginBottom="16dp">
 
-        <TextView
-            android:id="@+id/fuel_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Fuel Level: --"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="#000000"
-            android:layout_marginBottom="12dp" />
+                <TextView
+                    android:id="@+id/vhal_status_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="VHAL: Connecting..."
+                    android:textSize="14sp"
+                    android:textColor="#424242" />
 
-        <TextView
-            android:id="@+id/vin_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="VIN: --"
-            android:textSize="16sp"
-            android:textColor="#000000" />
+            </LinearLayout>
+
+            <!-- ABS Status Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#f5f5f5"
+                android:padding="16dp"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ABS Status"
+                    android:textSize="12sp"
+                    android:textColor="#757575"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/abs_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#1976d2" />
+
+            </LinearLayout>
+
+            <!-- Fuel Level Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#f5f5f5"
+                android:padding="16dp"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fuel Level"
+                    android:textSize="12sp"
+                    android:textColor="#757575"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/fuel_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#1976d2" />
+
+            </LinearLayout>
+
+            <!-- VIN Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#f5f5f5"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="VIN"
+                    android:textSize="12sp"
+                    android:textColor="#757575"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/vin_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textSize="14sp"
+                    android:textColor="#424242" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Divisor -->
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#e0e0e0" />
+
+        <!-- Painel direito: Logs -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="#263238"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Logcat"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#4db8ff" />
+
+                <Button
+                    android:id="@+id/copy_logs_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Copy"
+                    android:textSize="11sp"
+                    android:textColor="#263238"
+                    android:backgroundTint="#4db8ff"
+                    android:padding="6dp"
+                    android:minHeight="32dp" />
+
+            </LinearLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#1a237e">
+
+                <TextView
+                    android:id="@+id/logs_display"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Aguardando logs..."
+                    android:textSize="10sp"
+                    android:textColor="#4db8ff"
+                    android:textIsSelectable="true"
+                    android:fontFamily="monospace"
+                    android:padding="8dp" />
+
+            </ScrollView>
+
+        </LinearLayout>
 
     </LinearLayout>
 
