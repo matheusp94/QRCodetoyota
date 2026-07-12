@@ -59,116 +59,116 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="top|center_horizontal"
             android:background="#ffffff"
-            android:padding="24dp">
+            android:padding="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Vehicle Status"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:textColor="#1976d2"
-                android:layout_marginBottom="24dp" />
+                android:layout_marginBottom="12dp" />
 
-            <!-- VHAL Status Card -->
+            <!-- VHAL Status -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="#f5f5f5"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp">
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="VHAL:"
+                    android:textSize="12sp"
+                    android:textColor="#757575" />
 
                 <TextView
                     android:id="@+id/vhal_status_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="VHAL: Connecting..."
-                    android:textSize="14sp"
-                    android:textColor="#424242" />
+                    android:text="Connecting..."
+                    android:textSize="12sp"
+                    android:textColor="#424242"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
-            <!-- ABS Status Card -->
+            <!-- ABS Status -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="#f5f5f5"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp">
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="ABS Status"
+                    android:layout_weight="1"
+                    android:text="ABS:"
                     android:textSize="12sp"
-                    android:textColor="#757575"
-                    android:layout_marginBottom="4dp" />
+                    android:textColor="#757575" />
 
                 <TextView
                     android:id="@+id/abs_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="--"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#1976d2" />
+                    android:textSize="12sp"
+                    android:textColor="#1976d2"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
-            <!-- Fuel Level Card -->
+            <!-- Fuel Level -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="#f5f5f5"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp">
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Fuel Level"
+                    android:layout_weight="1"
+                    android:text="Fuel Level:"
                     android:textSize="12sp"
-                    android:textColor="#757575"
-                    android:layout_marginBottom="4dp" />
+                    android:textColor="#757575" />
 
                 <TextView
                     android:id="@+id/fuel_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="--"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#1976d2" />
+                    android:textSize="12sp"
+                    android:textColor="#1976d2"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
-            <!-- VIN Card -->
+            <!-- VIN -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="#f5f5f5"
-                android:padding="16dp">
+                android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="VIN"
+                    android:layout_weight="1"
+                    android:text="VIN:"
                     android:textSize="12sp"
-                    android:textColor="#757575"
-                    android:layout_marginBottom="4dp" />
+                    android:textColor="#757575" />
 
                 <TextView
                     android:id="@+id/vin_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="--"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:textColor="#424242" />
 
             </LinearLayout>
