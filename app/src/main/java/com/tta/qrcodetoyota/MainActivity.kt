@@ -113,9 +113,9 @@ class MainActivity : AppCompatActivity() {
             try {
                 runOnUiThread {
                     vhalStatusTextView.text = "VHAL: Refreshing..."
-                    absTextView.text = "ABS Status: --"
-                    fuelTextView.text = "Fuel Level: --"
-                    vinTextView.text = "VIN: --"
+                    absTextView.text = "ABS Status: Refreshing..."
+                    fuelTextView.text = "Fuel Level: Refreshing..."
+                    vinTextView.text = "VIN: Refreshing..."
                 }
 
                 vhalReader.disconnect()
@@ -127,12 +127,31 @@ class MainActivity : AppCompatActivity() {
                     vhalStatusTextView.text = "VHAL: Connected"
                 }
 
+                // Wait for callbacks to fire (data arrival)
+                Thread.sleep(2000)
+
+                runOnUiThread {
+                    // If still showing "Refreshing...", it means no data arrived
+                    if (absTextView.text.toString().contains("Refreshing")) {
+                        absTextView.text = "ABS Status: N/A"
+                    }
+                    if (fuelTextView.text.toString().contains("Refreshing")) {
+                        fuelTextView.text = "Fuel Level: N/A"
+                    }
+                    if (vinTextView.text.toString().contains("Refreshing")) {
+                        vinTextView.text = "VIN: N/A"
+                    }
+                }
+
                 FileLogger.d(TAG, "Refresh completed successfully")
             } catch (e: Exception) {
                 val msg = "Error during refresh: ${e.message}"
                 FileLogger.e(TAG, msg, e)
                 runOnUiThread {
                     vhalStatusTextView.text = "VHAL: Refresh Error"
+                    absTextView.text = "ABS Status: Error"
+                    fuelTextView.text = "Fuel Level: Error"
+                    vinTextView.text = "VIN: Error"
                 }
             }
         }.start()
