@@ -60,19 +60,19 @@ class MainActivity : AppCompatActivity() {
             this,
             { absStatus ->
                 runOnUiThread {
-                    absTextView.text = "ABS Status: $absStatus"
+                    absTextView.text = absStatus
                     Log.d(TAG, "ABS updated: $absStatus")
                 }
             },
             { fuelStatus ->
                 runOnUiThread {
-                    fuelTextView.text = "Fuel Level: $fuelStatus"
+                    fuelTextView.text = fuelStatus
                     Log.d(TAG, "Fuel updated: $fuelStatus")
                 }
             },
             { vinStatus ->
                 runOnUiThread {
-                    vinTextView.text = "VIN: $vinStatus"
+                    vinTextView.text = vinStatus
                     Log.d(TAG, "VIN updated: $vinStatus")
                 }
             }
@@ -99,9 +99,9 @@ class MainActivity : AppCompatActivity() {
                 Log.e(TAG, "Error connecting to VHAL", e)
                 runOnUiThread {
                     vhalStatusTextView.text = "VHAL: Connection Error"
-                    absTextView.text = "ABS Status: Error"
-                    fuelTextView.text = "Fuel Level: Error"
-                    vinTextView.text = "VIN: Error"
+                    absTextView.text = "Error"
+                    fuelTextView.text = "Error"
+                    vinTextView.text = "Error"
                 }
             }
         }.start()
@@ -113,9 +113,9 @@ class MainActivity : AppCompatActivity() {
             try {
                 runOnUiThread {
                     vhalStatusTextView.text = "VHAL: Refreshing..."
-                    absTextView.text = "ABS Status: Refreshing..."
-                    fuelTextView.text = "Fuel Level: Refreshing..."
-                    vinTextView.text = "VIN: Refreshing..."
+                    absTextView.text = "Refreshing..."
+                    fuelTextView.text = "Refreshing..."
+                    vinTextView.text = "Refreshing..."
                 }
 
                 vhalReader.disconnect()
@@ -149,9 +149,9 @@ class MainActivity : AppCompatActivity() {
                 FileLogger.e(TAG, msg, e)
                 runOnUiThread {
                     vhalStatusTextView.text = "VHAL: Refresh Error"
-                    absTextView.text = "ABS Status: Error"
-                    fuelTextView.text = "Fuel Level: Error"
-                    vinTextView.text = "VIN: Error"
+                    absTextView.text = "Error"
+                    fuelTextView.text = "Error"
+                    vinTextView.text = "Error"
                 }
             }
         }.start()
