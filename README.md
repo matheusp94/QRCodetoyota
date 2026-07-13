@@ -176,7 +176,11 @@ adb pull /data/data/com.tta.qrcodetoyota/files/logs/app.log
 
 ## 🔧 Useful ADB Commands
 
-### Install app as System App (with VHAL privileges)
+### Install app as System App (⚠️ Not Recommended - Causes Emulator Hang)
+
+**⚠️ WARNING:** This approach causes the emulator to hang indefinitely during boot. Not recommended for testing.
+
+For testing VHAL permissions, use regular app installation with permission grants instead (see Troubleshooting section).
 
 ```powershell
 # 1. Launch emulator with writable system
@@ -191,7 +195,7 @@ adb shell mkdir -p /system/priv-app/QRCodetoyota
 adb push app/build/outputs/apk/debug/app-debug.apk /system/priv-app/QRCodetoyota/app.apk
 adb shell chmod 644 /system/priv-app/QRCodetoyota/app.apk
 
-# 4. Reboot
+# 4. Reboot (⚠️ May hang here)
 adb reboot
 ```
 
@@ -227,13 +231,32 @@ adb shell pm grant com.tta.qrcodetoyota android.permission.READ_LOGS
 
 ## 🐛 Troubleshooting
 
+### ⚠️ System App Installation Issue
+
+**Problem:** Installing the app to `/system/priv-app/` causes the emulator to hang indefinitely during boot
+
+**Status:** Known issue - Cannot test app as system app in this environment
+
+**Impact:** Minimal - App behavior is fully testable using regular installation with permission grants. The only difference would be privileged system-level access, which is not required for VHAL testing.
+
+**Recommended Testing Method:** Use regular app installation with ADB permission grants:
+```powershell
+adb install app/build/outputs/apk/debug/app-debug.apk
+adb shell pm grant com.tta.qrcodetoyota android.car.permission.CAR_DYNAMICS
+adb shell pm grant com.tta.qrcodetoyota android.permission.READ_LOGS
+```
+
+**Result:** App functions identically to system app installation for VHAL property access and testing.
+
+---
+
 ### "VHAL: Connection Error"
 
 **Cause:** No permission to access VHAL
 
 **Solution:**
-1. Install as system app (see section above)
-2. Or grant permission: `adb shell pm grant com.tta.qrcodetoyota android.car.permission.CAR_DYNAMICS`
+1. Install as regular app (not system app - see warning above)
+2. Grant permission: `adb shell pm grant com.tta.qrcodetoyota android.car.permission.CAR_DYNAMICS`
 3. Restart the app
 
 ### "No Permission" appears in logs
