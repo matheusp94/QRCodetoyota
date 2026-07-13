@@ -5,10 +5,11 @@ Android Automotive application for monitoring and debugging Vehicle HAL (VHAL) p
 ## 📋 Features
 
 - ✅ Real-time VHAL property reading (ABS, Fuel Level, VIN)
-- ✅ Continuous Logcat capture on screen
-- ✅ Log export to file (.txt)
-- ✅ Copy logs to clipboard
-- ✅ Clean and intuitive interface
+- ✅ Refresh button to reconnect and retrieve fresh data
+- ✅ Clear status indicators: "Refreshing...", "Connected", "N/A", or actual values
+- ✅ Dual logging: App logs + System Logcat capture
+- ✅ Copy all logs to clipboard (combined)
+- ✅ Clean and intuitive single-panel interface
 - ✅ Persistent log file for offline debugging
 
 ---
@@ -51,73 +52,125 @@ adb shell am start -n com.tta.qrcodetoyota/.MainActivity
 
 ### Main Interface
 
-The screen is divided into **2 panels**:
+The app displays a single clean panel with:
 
-**Left Panel (White):**
-- VHAL Status
-- ABS Status (ON/OFF)
-- Fuel Level (in mm)
-- Vehicle VIN
+**Vehicle Status Section:**
+- **VHAL:** Connection status
+- **ABS:** ON/OFF or N/A if unavailable
+- **Fuel Level:** Value in mm or N/A if unavailable
+- **VIN:** Vehicle identification number or N/A if unavailable
 
-**Right Panel (Black):**
-- Real-time Logcat
-- "Copy" button to copy logs
-- All logs with date/time/level/tag
+**Log Management Section:**
+- **"Copy Complete Logs to Clipboard"** button
+- Copies all app logs + system Logcat (permissions, property changes, errors)
 
 ### Application Buttons
 
 | Button | Function |
 |--------|----------|
-| **Export** | Exports logs to `/sdcard/Download/` |
-| **Refresh** | Reconnects to VHAL and retrieves data again |
-| **Copy** | Copies all displayed logs to clipboard |
+| **Refresh** | Reconnects to VHAL and retrieves fresh data |
+| **Copy** | Copies app logs + system Logcat to clipboard |
 | **✕** | Closes the app |
 
+### VHAL Properties
+
+| Property | Type | Updates | Behavior |
+|----------|------|---------|----------|
+| **VIN** | Static | Only on app restart | Does not change during runtime. Value is cached when app starts. |
+| **ABS** | On Change | When value changes | Updates only when ABS status actually changes (ON ↔ OFF). Clicking refresh may not update if status hasn't changed. |
+| **Fuel Level** | Continuous | Continuously | Updates in real-time as fuel level changes. Most likely to update when clicking refresh. |
+
+### Refresh Behavior
+
+**Before Refresh:**
+```
+VHAL: Connected
+ABS: N/A
+Fuel Level: N/A
+VIN: N/A
+```
+
+**During Refresh:**
+```
+VHAL: Refreshing...
+ABS: Refreshing...
+Fuel Level: Refreshing...
+VIN: Refreshing...
+```
+
+**After Refresh (with data):**
+```
+VHAL: Connected
+ABS: ON              (updates if value changed)
+Fuel Level: 50 mm    (most likely to update - continuous property)
+VIN: JTHBP5C2XA5034817  (updates only after app restart)
+```
+
+**After Refresh (no data):**
+```
+VHAL: Connected
+ABS: N/A             (no update if value didn't change)
+Fuel Level: N/A      (unlikely - continuous property should update)
+VIN: N/A             (needs app restart to update)
+```
+
+### Updating VHAL Properties
+
+- **Fuel Level:** Click "Refresh" - will update (continuous property)
+- **ABS:** Click "Refresh" - will update only if the ON/OFF status changed since last read
+- **VIN:** Must restart the entire app - static property cached at startup
+
 ---
 
-## 📋 Viewing Logs - 2 Options
+## 📋 Viewing Logs
 
-### Option 1: Copy to Clipboard (In-App)
+### Copy to Clipboard (In-App)
 
-**Step 1:** Click the **"Copy"** button in the logs panel
+**Step 1:** Click the **"Copy Complete Logs to Clipboard"** button
 
-**Step 2:** Logs are copied! Now you can:
-- Paste in a text editor: `Ctrl + V`
-- Paste in a document
-- Paste in an email/Slack
+**Step 2:** Logs are copied! Now you can paste in:
+- Text editor: `Ctrl + V`
+- Email/Slack/Document
+- Any messaging app
 
-**Advantage:** Fast and practical for sharing logs immediately
+**Contents:**
+- All app logs (FileLogger format)
+- System Logcat (CarPropertyManager, permissions, property changes)
+
+### Log Format
+
+Logs appear in the following format:
+
+```
+2026-07-13 14:31:33.598  8747-9720  VhalReader      com.tta.qrcodetoyota  D  Property changed! ID: 287310858, Value: true
+```
+
+**Fields:**
+- **Date/Time:** 2026-07-13 14:31:33.598
+- **PID-TID:** 8747-9720 (Process and Thread ID)
+- **Tag:** VhalReader (Log source)
+- **Package:** com.tta.qrcodetoyota
+- **Level:** D (Debug), I (Info), W (Warning), E (Error)
+- **Message:** Log content
 
 ---
 
-### Option 2: Export to File
+## 📁 Log Files
 
-**Step 1:** Click the **"Export"** button in the top bar
+### Persistent Log (Permanent)
 
-**Step 2:** A Toast will display:
-```
-✓ Logs exported!
-
-ADB Command:
-adb pull /sdcard/Download/VHAL_Logs_2026-07-13_14-30-45.txt
-```
-
-**Step 3:** Copy the displayed command or use this pattern:
-
+- **Location:** `/data/data/com.tta.qrcodetoyota/files/logs/app.log`
+- **Access:**
 ```powershell
-adb pull /sdcard/Download/VHAL_Logs_*.txt
+adb pull /data/data/com.tta.qrcodetoyota/files/logs/app.log
 ```
+- **Content:** All app logs since app first ran
 
-**Step 4:** Logs will be on your computer. View them:
+### System Logs
 
-```powershell
-type VHAL_Logs_2026-07-13_14-30-45.txt
-```
-
-**Step 5:** The file can now be:
-- Shared via email
-- Sent via WhatsApp/Slack
-- Stored for later analysis
+- **Captured via:** Logcat background thread
+- **Available in:** Copy to Clipboard feature
+- **Contains:** CarPropertyManager events, permission errors, property changes
 
 ---
 
@@ -154,44 +207,20 @@ adb devices
 adb logcat
 ```
 
-### List Exported Files
-
-```powershell
-adb shell ls -lh /sdcard/Download/VHAL_Logs*
-```
-
 ### Pull Persistent Log File
 
 ```powershell
 adb pull /data/data/com.tta.qrcodetoyota/files/logs/app.log
 ```
 
----
+### Grant Permissions via ADB
 
-## 📁 Log Files
-
-### In-App Log (Temporary)
-
-- **Location:** Right panel on screen
-- **Limit:** Last 50 lines
-- **Format:** Logcat with timestamp
-
-### Persistent Log (Permanent)
-
-- **Location:** `/data/data/com.tta.qrcodetoyota/files/logs/app.log`
-- **Access:**
 ```powershell
-adb pull /data/data/com.tta.qrcodetoyota/files/logs/app.log
-```
-- **Content:** All logs since first execution
+# VHAL access
+adb shell pm grant com.tta.qrcodetoyota android.car.permission.CAR_DYNAMICS
 
-### Exported Log (Manual)
-
-- **Location:** `/sdcard/Download/VHAL_Logs_YYYY-MM-DD_HH-MM-SS.txt`
-- **Generated by:** Clicking "Export"
-- **Access:**
-```powershell
-adb pull /sdcard/Download/VHAL_Logs_*.txt
+# Logcat reading
+adb shell pm grant com.tta.qrcodetoyota android.permission.READ_LOGS
 ```
 
 ---
@@ -204,16 +233,16 @@ adb pull /sdcard/Download/VHAL_Logs_*.txt
 
 **Solution:**
 1. Install as system app (see section above)
-2. Or: `adb shell pm grant com.tta.qrcodetoyota android.car.permission.CAR_DYNAMICS`
+2. Or grant permission: `adb shell pm grant com.tta.qrcodetoyota android.car.permission.CAR_DYNAMICS`
 3. Restart the app
 
-### "No Permission" on ABS/Fuel/VIN
+### "No Permission" appears in logs
 
-**Cause:** Same as above
+**Cause:** Missing android.car.permission.CAR_DYNAMICS
 
 **Solution:** Follow the steps above
 
-### Logs not appearing
+### Logs not appearing in clipboard copy
 
 **Cause:** `READ_LOGS` permission not granted
 
@@ -222,39 +251,14 @@ adb pull /sdcard/Download/VHAL_Logs_*.txt
 adb shell pm grant com.tta.qrcodetoyota android.permission.READ_LOGS
 ```
 
-### "Copy" button not working
+### Data stays "N/A" after refresh
 
-**Cause:** App without clipboard access
-
-**Solution:** Use file export option instead
-
-### File not appearing in /sdcard/Download/
-
-**Cause:** Folder not created or permission denied
+**Cause:** VHAL property not available or vehicle not simulated in emulator
 
 **Solution:**
-```powershell
-adb shell mkdir -p /sdcard/Download
-adb shell pm grant com.tta.qrcodetoyota android.permission.WRITE_EXTERNAL_STORAGE
-```
-
----
-
-## 📊 Log Format
-
-Logs appear in the following format:
-
-```
-2026-07-13 14:31:33.598  8747-9720  CarPropertyManager      com.tta.qrcodetoyota  W  register: PropertyId=291504903
-```
-
-**Fields:**
-- **Date/Time:** 2026-07-13 14:31:33.598
-- **PID-TID:** 8747-9720 (Process and Thread ID)
-- **Tag:** CarPropertyManager (Log source)
-- **Package:** com.tta.qrcodetoyota
-- **Level:** W (Warning), E (Error), D (Debug), I (Info)
-- **Message:** Log content
+1. Check logs for "Property changed" events
+2. Ensure emulator is running automotive OS
+3. Verify CarPropertyManager access via logcat
 
 ---
 
@@ -263,25 +267,34 @@ Logs appear in the following format:
 ```xml
 <!-- VHAL Access -->
 android.car.permission.CAR_DYNAMICS
-android.permission.READ_PRIVILEGED_PHONE_STATE
 
 <!-- Logging -->
 android.permission.READ_LOGS
-
-<!-- File Export -->
-android.permission.WRITE_EXTERNAL_STORAGE
-android.permission.READ_EXTERNAL_STORAGE
 ```
 
 ---
 
-## 📝 Important Notes
+## 📝 Architecture
 
-1. **System App:** For full VHAL access, install as system app
-2. **Persistent Logs:** The `app.log` file maintains full history
-3. **Clipboard:** Limited to 50 lines maximum (for performance)
-4. **Export:** Creates new file each time (with timestamp)
-5. **Emulator:** Recommended to launch with `-writable-system` for privileges
+### FileLogger
+- Generates logs in Logcat format
+- Writes to `/data/data/com.tta.qrcodetoyota/files/logs/app.log`
+- Methods: d(), i(), w(), e() for different log levels
+
+### LogCapturer
+- Captures system Logcat via `Runtime.exec("logcat")`
+- Stores in memory (up to 1000 lines)
+- Included when copying logs to clipboard
+
+### VhalReader
+- Manages CarPropertyManager connection
+- Registers callbacks for ABS, Fuel Level, VIN
+- Updates UI via callbacks when property values change
+
+### MainActivity
+- Manages UI and user interactions
+- Handles refresh button (disconnect/reconnect)
+- Combines app logs + system logs for clipboard export
 
 ---
 
@@ -289,12 +302,13 @@ android.permission.READ_EXTERNAL_STORAGE
 
 ```
 1. Open the app
-2. Click "Refresh" to reconnect
-3. Observe logs in right panel
-4. Click "Export" to save
-5. Use: adb pull /sdcard/Download/VHAL_Logs_*.txt
-6. View: type VHAL_Logs_*.txt
-7. Analyze errors/warnings
+2. Check initial status (should show N/A or actual values)
+3. Click "Refresh" to reconnect and get fresh data
+4. Observe "Refreshing..." → "Connected" (or data values)
+5. Click "Copy Complete Logs to Clipboard"
+6. Paste in text editor or email
+7. Check for errors/permissions in logs
+8. Use 'adb pull' to get persistent app.log if needed
 ```
 
 ---
@@ -302,12 +316,13 @@ android.permission.READ_EXTERNAL_STORAGE
 ## 📞 Support
 
 For issues or questions:
-1. Check logs for error messages
+1. Check logs for error messages and permission denials
 2. Test the ADB commands above
 3. Refer to the Troubleshooting section
+4. Check that emulator is running automotive OS with VHAL support
 
 ---
 
-**Version:** 1.0  
+**Version:** 1.1  
 **Last Updated:** 2026-07-13  
 **Status:** Prototype - Under Development
