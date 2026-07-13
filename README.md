@@ -69,7 +69,7 @@ The app displays a single clean panel with:
 | Button | Function |
 |--------|----------|
 | **Refresh** | Reconnects to VHAL and retrieves fresh data |
-| **Copy** | Copies app logs + system Logcat to clipboard |
+| **Copy Complete Logs to Clipboard** | Copies app logs + system Logcat to clipboard |
 | **✕** | Closes the app |
 
 ### VHAL Properties
@@ -282,7 +282,7 @@ android.permission.READ_LOGS
 - Methods: d(), i(), w(), e() for different log levels
 
 ### LogCapturer
-- Captures system Logcat via `Runtime.exec("logcat")`
+- Captures system Logcat via `Runtime.exec("logcat -v threadtime")`
 - Stores in memory (up to 1000 lines)
 - Included when copying logs to clipboard
 
