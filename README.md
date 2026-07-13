@@ -306,16 +306,31 @@ adb shell pm grant com.tta.qrcodetoyota android.permission.READ_LOGS
 
 ---
 
-## 🔐 Permissions Used
+## 🔐 Permissions and System Integration
+
+### Permissions
 
 ```xml
-<!-- VHAL Access -->
+<!-- VHAL Access - Dynamics Properties (ABS, Fuel Level) -->
 android.car.permission.CAR_DYNAMICS
+
+<!-- VHAL Access - Identification Properties (VIN) -->
 android.car.permission.CAR_IDENTIFICATION
 
 <!-- Logging -->
 android.permission.READ_LOGS
 ```
+
+### Shared User ID
+
+The app uses `android:sharedUserId="android.ui.system"` to share the system's UID for privileged access to vehicle properties.
+
+**What this means:**
+- Allows the app to run with system-level privileges
+- Required for full VHAL property access
+- Only works when app is installed as system app
+
+**Important:** This requires the app to be signed with the Android system signing key. Regular debug APKs with this setting may not function as expected.
 
 ---
 

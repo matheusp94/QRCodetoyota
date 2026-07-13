@@ -79,7 +79,7 @@ class VhalReader(
             carPropertyManager?.registerCallback(this, VIN, 0f)
             FileLogger.d(TAG, "VIN Callback registered successfully")
         } catch (e: SecurityException) {
-            FileLogger.permissionDenied(TAG, "android.car.permission.CAR_DYNAMICS (VIN)")
+            FileLogger.permissionDenied(TAG, "android.car.permission.CAR_IDENTIFICATION (VIN)")
             FileLogger.exception(TAG, "VIN property registration", e)
             onVinChanged("No Permission")
         } catch (e: Exception) {
