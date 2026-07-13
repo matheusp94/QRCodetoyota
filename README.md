@@ -239,8 +239,9 @@ adb pull /data/data/com.tta.qrcodetoyota/files/logs/app.log
 ### Grant Permissions via ADB
 
 ```powershell
-# VHAL access
+# VHAL access (dynamics + identification)
 adb shell pm grant com.tta.qrcodetoyota android.car.permission.CAR_DYNAMICS
+adb shell pm grant com.tta.qrcodetoyota android.car.permission.CAR_IDENTIFICATION
 
 # Logcat reading
 adb shell pm grant com.tta.qrcodetoyota android.permission.READ_LOGS
@@ -262,6 +263,7 @@ adb shell pm grant com.tta.qrcodetoyota android.permission.READ_LOGS
 ```powershell
 adb install app/build/outputs/apk/debug/app-debug.apk
 adb shell pm grant com.tta.qrcodetoyota android.car.permission.CAR_DYNAMICS
+adb shell pm grant com.tta.qrcodetoyota android.car.permission.CAR_IDENTIFICATION
 adb shell pm grant com.tta.qrcodetoyota android.permission.READ_LOGS
 ```
 
@@ -309,6 +311,7 @@ adb shell pm grant com.tta.qrcodetoyota android.permission.READ_LOGS
 ```xml
 <!-- VHAL Access -->
 android.car.permission.CAR_DYNAMICS
+android.car.permission.CAR_IDENTIFICATION
 
 <!-- Logging -->
 android.permission.READ_LOGS

@@ -4,6 +4,7 @@
 
     <!-- Car API Permissions -->
     <uses-permission android:name="android.car.permission.CAR_DYNAMICS" />
+    <uses-permission android:name="android.car.permission.CAR_IDENTIFICATION" />
     <uses-permission android:name="android.permission.READ_LOGS" />
 
     <application
