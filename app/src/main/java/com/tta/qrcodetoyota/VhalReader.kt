@@ -45,48 +45,45 @@ class VhalReader(
     }
 
     private fun registerCallbacks() {
-        // Registrar ABS callback
+        // Register ABS callback
         try {
             FileLogger.d(TAG, "Registering callback for ABS property (ID: $ABS_IS_ACTIVE)...")
             carPropertyManager?.registerCallback(this, ABS_IS_ACTIVE, 0f)
             FileLogger.d(TAG, "ABS Callback registered successfully")
         } catch (e: SecurityException) {
-            val msg = "ABS - Permission denied: ${e.message}"
-            FileLogger.e(TAG, msg, e)
+            FileLogger.permissionDenied(TAG, "android.car.permission.CAR_DYNAMICS (ABS_IS_ACTIVE)")
+            FileLogger.exception(TAG, "ABS property registration", e)
             onAbsChanged("No Permission")
         } catch (e: Exception) {
-            val msg = "ABS - Error registering callback: ${e.message}"
-            FileLogger.e(TAG, msg, e)
+            FileLogger.exception(TAG, "ABS property registration", e)
             onAbsChanged("Error")
         }
 
-        // Registrar Fuel Level callback
+        // Register Fuel Level callback
         try {
             FileLogger.d(TAG, "Registering callback for Fuel Level property (ID: $FUEL_LEVEL)...")
             carPropertyManager?.registerCallback(this, FUEL_LEVEL, 0f)
             FileLogger.d(TAG, "Fuel Level Callback registered successfully")
         } catch (e: SecurityException) {
-            val msg = "Fuel Level - Permission denied: ${e.message}"
-            FileLogger.e(TAG, msg, e)
+            FileLogger.permissionDenied(TAG, "android.car.permission.CAR_DYNAMICS (FUEL_LEVEL)")
+            FileLogger.exception(TAG, "Fuel Level property registration", e)
             onFuelChanged("No Permission")
         } catch (e: Exception) {
-            val msg = "Fuel Level - Error registering callback: ${e.message}"
-            FileLogger.e(TAG, msg, e)
+            FileLogger.exception(TAG, "Fuel Level property registration", e)
             onFuelChanged("Error")
         }
 
-        // Registrar VIN callback (propriedade estática)
+        // Register VIN callback (static property)
         try {
             FileLogger.d(TAG, "Registering callback for VIN property (ID: $VIN)...")
             carPropertyManager?.registerCallback(this, VIN, 0f)
             FileLogger.d(TAG, "VIN Callback registered successfully")
         } catch (e: SecurityException) {
-            val msg = "VIN - Permission denied: ${e.message}"
-            FileLogger.e(TAG, msg, e)
+            FileLogger.permissionDenied(TAG, "android.car.permission.CAR_DYNAMICS (VIN)")
+            FileLogger.exception(TAG, "VIN property registration", e)
             onVinChanged("No Permission")
         } catch (e: Exception) {
-            val msg = "VIN - Error registering callback: ${e.message}"
-            FileLogger.e(TAG, msg, e)
+            FileLogger.exception(TAG, "VIN property registration", e)
             onVinChanged("Error")
         }
     }

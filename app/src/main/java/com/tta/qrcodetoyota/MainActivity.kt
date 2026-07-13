@@ -7,6 +7,7 @@ import android.widget.TextView
 import android.widget.Toast
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,10 +15,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var absTextView: TextView
     private lateinit var fuelTextView: TextView
     private lateinit var vinTextView: TextView
-    private lateinit var logsDisplayTextView: TextView
     private lateinit var vhalReader: VhalReader
-    private val logLines = mutableListOf<String>()
-    private val maxLogLines = 50
+    private val systemLogs = mutableListOf<String>()
+    private val maxSystemLogs = 1000
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,33 +27,35 @@ class MainActivity : AppCompatActivity() {
         absTextView = findViewById(R.id.abs_text)
         fuelTextView = findViewById(R.id.fuel_text)
         vinTextView = findViewById(R.id.vin_text)
-        logsDisplayTextView = findViewById(R.id.logs_display)
 
         FileLogger.init(this)
 
-        // Iniciar captura de logs
+        // Start capturing system Logcat (to get CarPropertyManager errors, etc)
         LogCapturer.start { logLine ->
-            runOnUiThread {
-                addLogLine(logLine)
+            synchronized(systemLogs) {
+                systemLogs.add(logLine)
+                if (systemLogs.size > maxSystemLogs) {
+                    systemLogs.removeAt(0)
+                }
             }
         }
 
-        // Botão de copiar logs
+        // Copy logs button
         findViewById<android.widget.Button>(R.id.copy_logs_button).setOnClickListener {
             copyLogsToClipboard()
         }
 
-        // Botão de refresh
+        // Refresh button
         findViewById<android.widget.Button>(R.id.refresh_button).setOnClickListener {
             refreshVhal()
         }
 
-        // Botão de fechar
+        // Close button
         findViewById<android.widget.Button>(R.id.close_button).setOnClickListener {
             finish()
         }
 
-        // Criar VhalReader com callbacks para ABS e Fuel
+        // Create VhalReader with callbacks for ABS and Fuel
         vhalReader = VhalReader(
             this,
             { absStatus ->
@@ -78,7 +80,7 @@ class MainActivity : AppCompatActivity() {
 
         Log.d(TAG, "MainActivity created")
 
-        // Conectar e registrar callbacks
+        // Connect and register callbacks
         Thread {
             try {
                 Log.d(TAG, "Attempting to connect to VHAL...")
@@ -136,20 +138,30 @@ class MainActivity : AppCompatActivity() {
         }.start()
     }
 
-    private fun addLogLine(line: String) {
-        logLines.add(0, line)
-        if (logLines.size > maxLogLines) {
-            logLines.removeAt(logLines.size - 1)
-        }
-        logsDisplayTextView.text = logLines.joinToString("\n")
-    }
-
     private fun copyLogsToClipboard() {
-        val allLogs = logLines.asReversed().joinToString("\n")
-        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = android.content.ClipData.newPlainText("Logs", allLogs)
-        clipboard.setPrimaryClip(clip)
-        Toast.makeText(this, "Logs copiados para área de transferência!", Toast.LENGTH_SHORT).show()
+        try {
+            val logFile = java.io.File(filesDir, "logs/app.log")
+
+            // Get app logs
+            val appLogs = if (logFile.exists()) logFile.readText() else ""
+
+            // Get system logs
+            val systemLogsText = synchronized(systemLogs) {
+                systemLogs.joinToString("\n")
+            }
+
+            // Combine both
+            val allLogs = "$appLogs\n\n=== System Logcat (CarPropertyManager, Permissions, etc) ===\n$systemLogsText"
+
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = android.content.ClipData.newPlainText("Logs", allLogs)
+            clipboard.setPrimaryClip(clip)
+            Toast.makeText(this, "Complete logs copied to clipboard!", Toast.LENGTH_SHORT).show()
+            FileLogger.d(TAG, "Logs copied to clipboard")
+        } catch (e: Exception) {
+            FileLogger.exception(TAG, "Copy logs to clipboard failed", e)
+            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onDestroy() {
