@@ -176,6 +176,25 @@ adb pull /data/data/com.tta.qrcodetoyota/files/logs/app.log
 
 ## 🔧 Useful ADB Commands
 
+### Find Your Emulator Name
+
+Before using any emulator commands, find the name of your Android Automotive emulator:
+
+```powershell
+emulator -list-avds
+```
+
+**Output example:**
+```
+testautomotive
+pixel4_automotive
+my_car_emulator
+```
+
+Use the name you see instead of `testautomotive` in the commands below.
+
+---
+
 ### Install app as System App (⚠️ Not Recommended - Causes Emulator Hang)
 
 **⚠️ WARNING:** This approach causes the emulator to hang indefinitely during boot. Not recommended for testing.
