@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:sharedUserId="android.ui.system">
 
+    <!-- Target Device: Toyota TAS700 VR (Android Automotive) -->
+
+    <!-- Android Automotive Feature -->
+    <uses-feature android:name="android.hardware.type.automotive" android:required="true" />
+
     <!-- Car API Permissions -->
     <uses-permission android:name="android.car.permission.CAR_DYNAMICS" />
     <uses-permission android:name="android.car.permission.CAR_IDENTIFICATION" />
@@ -20,7 +25,8 @@
 
         <activity
             android:name="com.tta.qrcodetoyota.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
